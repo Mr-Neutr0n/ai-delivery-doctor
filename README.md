@@ -3,6 +3,9 @@
 [![CI](https://github.com/Yazhou-Li/ai-delivery-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/Yazhou-Li/ai-delivery-doctor/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/Yazhou-Li/ai-delivery-doctor)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](pyproject.toml)
+[![Stars](https://img.shields.io/github/stars/Yazhou-Li/ai-delivery-doctor?style=social)](https://github.com/Yazhou-Li/ai-delivery-doctor/stargazers)
+[![Issues](https://img.shields.io/github/issues/Yazhou-Li/ai-delivery-doctor)](https://github.com/Yazhou-Li/ai-delivery-doctor/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 > **Evidence-first acceptance checks for AI applications. Find the first unsupported transition before your customer does.**
 
@@ -184,6 +187,12 @@ The first AI-native adapter is now built in: `openai-compatible` checks the mode
 - no automatic restarts or configuration changes;
 - no arbitrary shell execution;
 - no claim that network reachability proves downstream business behavior.
+
+## Documentation
+
+Start with [Getting Started](docs/GETTING_STARTED.md), [3-Minute Showcase](docs/SHOWCASE.md), or the [Documentation Index](docs/INDEX.md).
+
+For design reasoning, read [Technical Philosophy](docs/PHILOSOPHY.md) and [Architecture](docs/ARCHITECTURE.md).
 
 ## Roadmap
 
