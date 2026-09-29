@@ -68,6 +68,9 @@ aidoc doctor \
   --config aidoc.json \
   --json shareable-evidence.json \
   --shareable
+
+aidoc compare baseline.json current.json \
+  --markdown comparison.md
 ```
 
 ## Supported v0.1 checks
@@ -79,6 +82,8 @@ aidoc doctor \
 | `executable` | an executable is available on `PATH` |
 | `tcp` | a TCP connection can be established |
 | `http` | an HTTP endpoint returns an accepted status |
+
+Evidence bundles can also be compared across deployments or fixes. A required status regression makes `aidoc compare` exit non-zero, which makes it useful in CI and acceptance workflows.
 
 The core deliberately does **not** execute arbitrary shell commands from a contract.
 

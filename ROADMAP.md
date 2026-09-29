@@ -23,7 +23,7 @@ The roadmap is organized around one principle: **keep the evidence/acceptance co
 - [ ] MCP server/tool health adapter;
 - [ ] Docker/container readiness adapter;
 - [ ] reusable acceptance profiles;
-- [ ] evidence comparison between two runs.
+- [x] evidence comparison between two runs.
 
 ## v0.3 — Delivery workflow
 

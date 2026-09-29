@@ -6,6 +6,12 @@ from pathlib import Path
 
 from . import __version__
 from .checks import run_checks
+from .compare import (
+    compare_evidence,
+    has_required_regression,
+    render_markdown as render_compare_markdown,
+    render_terminal as render_compare_terminal,
+)
 from .config import load_config
 from .model import evidence_bundle, first_blocker
 from .report import render_markdown, render_terminal
@@ -66,6 +72,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate.add_argument("--config", type=Path, required=True)
 
+    compare = sub.add_parser(
+        "compare",
+        help="Compare two AI Delivery Doctor evidence bundles.",
+    )
+    compare.add_argument("before", type=Path)
+    compare.add_argument("after", type=Path)
+    compare.add_argument("--markdown", type=Path, dest="markdown_output")
+
     doctor = sub.add_parser("doctor", help="Run delivery checks.")
     doctor.add_argument("--config", type=Path, required=True)
     doctor.add_argument("--json", type=Path, dest="json_output")
@@ -93,6 +107,23 @@ def main(argv: list[str] | None = None) -> int:
         _write_json(args.output, SAMPLE_CONFIG)
         print(args.output)
         return 0
+
+    if args.command == "compare":
+        try:
+            changes = compare_evidence(args.before, args.after)
+        except ValueError as exc:
+            raise SystemExit(f"error: {exc}") from exc
+
+        print(render_compare_terminal(changes))
+
+        if args.markdown_output:
+            args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+            args.markdown_output.write_text(
+                render_compare_markdown(changes),
+                encoding="utf-8",
+            )
+
+        return 1 if has_required_regression(changes) else 0
 
     try:
         config = load_config(args.config)
