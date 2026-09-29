@@ -1,5 +1,12 @@
 # AI Delivery Doctor
 
+[![CI](https://github.com/Yazhou-Li/ai-delivery-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/Yazhou-Li/ai-delivery-doctor/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/Yazhou-Li/ai-delivery-doctor)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](pyproject.toml)
+[![Stars](https://img.shields.io/github/stars/Yazhou-Li/ai-delivery-doctor?style=social)](https://github.com/Yazhou-Li/ai-delivery-doctor/stargazers)
+[![Issues](https://img.shields.io/github/issues/Yazhou-Li/ai-delivery-doctor)](https://github.com/Yazhou-Li/ai-delivery-doctor/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 > **面向 AI 应用交付的“证据优先”验收工具：在客户发现问题之前，先找到第一处无法被证明成立的链路。**
 
 AI Delivery Doctor（`aidoc`）关注的不是“再做一个 Agent 框架”，而是 AI 从 Demo 到真实交付之间最容易失控的部分。
