@@ -22,7 +22,16 @@ def collect_skill_files(skill_dir: Path) -> list[Path]:
 
     files: list[Path] = []
 
-    for path in sorted(skill_dir.rglob("*")):
+    candidates = [path for path in skill_dir.rglob("*")]
+    candidates.sort(
+        key=lambda path: (
+            0 if path.relative_to(skill_dir).as_posix() == "SKILL.md" else 1,
+            path.relative_to(skill_dir).as_posix().casefold(),
+            path.relative_to(skill_dir).as_posix(),
+        )
+    )
+
+    for path in candidates:
         if path.is_symlink():
             raise ValueError(
                 f"symlinks are not allowed in skill archives: {path}"
