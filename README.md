@@ -3,6 +3,9 @@
 [![CI](https://github.com/Yazhou-Li/ai-delivery-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/Yazhou-Li/ai-delivery-doctor/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/Yazhou-Li/ai-delivery-doctor)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](pyproject.toml)
+[![Stars](https://img.shields.io/github/stars/Yazhou-Li/ai-delivery-doctor?style=social)](https://github.com/Yazhou-Li/ai-delivery-doctor/stargazers)
+[![Issues](https://img.shields.io/github/issues/Yazhou-Li/ai-delivery-doctor)](https://github.com/Yazhou-Li/ai-delivery-doctor/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 > **Evidence-first acceptance checks for AI applications. Find the first unsupported transition before your customer does.**
 
