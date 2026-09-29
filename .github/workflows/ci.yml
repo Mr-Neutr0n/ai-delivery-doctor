@@ -47,3 +47,6 @@ jobs:
 
       - name: Run deterministic showcase
         run: python scripts/showcase.py
+
+      - name: Validate Agent Skill
+        run: python scripts/validate_skill.py .agents/skills/ai-delivery-doctor

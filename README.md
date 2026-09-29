@@ -155,9 +155,10 @@ The Skill handles the semantic part of the workflow:
 4. run deterministic checks;
 5. interpret the first unsupported transition without inventing a root cause.
 
-Package it for sharing:
+Validate and package it for sharing:
 
 ```bash
+python scripts/validate_skill.py .agents/skills/ai-delivery-doctor
 python scripts/package_skill.py .agents/skills/ai-delivery-doctor
 ```
 
