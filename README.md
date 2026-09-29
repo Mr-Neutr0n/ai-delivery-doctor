@@ -98,6 +98,8 @@ aidoc compare baseline.json current.json \
 
 Evidence bundles can also be compared across deployments or fixes. A required status regression makes `aidoc compare` exit non-zero, which makes it useful in CI and acceptance workflows.
 
+Both the input contract and evidence output have public JSON Schemas under `schema/`. Evidence bundles record the AI Delivery Doctor package version that generated them.
+
 The core deliberately does **not** execute arbitrary shell commands from a contract.
 
 ## Example contract

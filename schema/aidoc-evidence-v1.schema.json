@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Yazhou-Li/ai-delivery-doctor/blob/main/schema/aidoc-evidence-v1.schema.json",
+  "title": "AI Delivery Doctor Evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "toolVersion",
+    "name",
+    "generatedAt",
+    "shareable",
+    "summary",
+    "firstBlockingCheck",
+    "checks"
+  ],
+  "properties": {
+    "schema": {"const": "aidoc-evidence-v1"},
+    "toolVersion": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "generatedAt": {"type": "string", "minLength": 1},
+    "shareable": {"type": "boolean"},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["PASS", "WARN", "FAIL"],
+      "properties": {
+        "PASS": {"type": "integer", "minimum": 0},
+        "WARN": {"type": "integer", "minimum": 0},
+        "FAIL": {"type": "integer", "minimum": 0}
+      }
+    },
+    "firstBlockingCheck": {
+      "type": ["string", "null"]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "check_id",
+          "stage",
+          "check_type",
+          "required",
+          "status",
+          "detail"
+        ],
+        "properties": {
+          "check_id": {"type": "string", "minLength": 1},
+          "stage": {"type": "string", "minLength": 1},
+          "check_type": {"type": "string", "minLength": 1},
+          "required": {"type": "boolean"},
+          "status": {"enum": ["PASS", "WARN", "FAIL"]},
+          "detail": {"type": "string"}
+        }
+      }
+    }
+  }
+}
