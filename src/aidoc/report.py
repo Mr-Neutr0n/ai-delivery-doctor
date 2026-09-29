@@ -5,7 +5,7 @@ from .model import CheckResult, first_blocker, result_counts
 
 def render_terminal(name: str, results: list[CheckResult]) -> str:
     width = max(len(result.check_id) for result in results)
-    lines = [f"AI Delivery Doctor — {name}", ""]
+    lines = [f"AI Delivery Doctor - {name}", ""]
 
     for result in results:
         requirement = "required" if result.required else "optional"
