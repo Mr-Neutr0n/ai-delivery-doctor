@@ -4,6 +4,8 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from typing import Iterable
 
+from . import __version__
+
 
 VALID_STATUSES = {"PASS", "WARN", "FAIL"}
 
@@ -54,6 +56,7 @@ def evidence_bundle(
     blocker = first_blocker(results)
     return {
         "schema": "aidoc-evidence-v1",
+        "toolVersion": __version__,
         "name": name,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "shareable": shareable,

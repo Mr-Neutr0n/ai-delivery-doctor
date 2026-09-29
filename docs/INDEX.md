@@ -12,6 +12,7 @@
 - [Architecture](ARCHITECTURE.md)
 - [Technical Philosophy](PHILOSOPHY.md)
 - [aidoc-v1 Contract Reference](CONTRACT_REFERENCE.md)
+- [Schema and Compatibility Policy](SCHEMA_VERSIONING.md)
 - [Evidence comparison in CI](CI_COMPARISON.md)
 - [OpenAI-Compatible Check](OPENAI_COMPATIBLE.md)
 
