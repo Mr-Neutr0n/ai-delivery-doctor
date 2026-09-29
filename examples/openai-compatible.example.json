@@ -1,0 +1,20 @@
+{
+  "schema": "aidoc-v1",
+  "name": "local-openai-compatible-model",
+  "checks": [
+    {
+      "id": "python-runtime",
+      "stage": "environment",
+      "type": "executable",
+      "name": "python",
+      "required": true
+    },
+    {
+      "id": "local-model-catalog",
+      "stage": "model",
+      "type": "openai-compatible",
+      "base_url": "http://127.0.0.1:11434/v1",
+      "required": false
+    }
+  ]
+}

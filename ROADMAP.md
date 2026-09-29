@@ -18,7 +18,7 @@ The roadmap is organized around one principle: **keep the evidence/acceptance co
 
 ## v0.2 — AI-native adapters
 
-- [ ] OpenAI-compatible endpoint adapter;
+- [x] OpenAI-compatible endpoint adapter;
 - [ ] Ollama adapter;
 - [ ] MCP server/tool health adapter;
 - [ ] Docker/container readiness adapter;

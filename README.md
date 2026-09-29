@@ -82,6 +82,7 @@ aidoc compare baseline.json current.json \
 | `executable` | an executable is available on `PATH` |
 | `tcp` | a TCP connection can be established |
 | `http` | an HTTP endpoint returns an accepted status |
+| `openai-compatible` | a `/v1/models`-style catalog is reachable and optionally contains a required model |
 
 Evidence bundles can also be compared across deployments or fixes. A required status regression makes `aidoc compare` exit non-zero, which makes it useful in CI and acceptance workflows.
 
@@ -162,6 +163,8 @@ Target → Probe → Evidence → Assertion → Transition → Acceptance
 ```
 
 MCP, RAG, Ollama, OpenAI-compatible APIs, browser agents, Docker, Kubernetes, and edge AI should be adapters around that core—not the foundation of the project.
+
+The first AI-native adapter is now built in: `openai-compatible` checks the model catalog directly, reads API keys only from environment variables, and never writes key values into evidence.
 
 ## Safety
 

@@ -7,7 +7,7 @@ import socket
 import urllib.error
 import urllib.request
 from pathlib import Path
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import urljoin, urlsplit, urlunsplit
 
 from .config import DeliveryConfig
 from .model import CheckResult, CheckSpec
@@ -86,7 +86,7 @@ def sanitize_result(result: CheckResult) -> CheckResult:
             if result.status == "PASS"
             else "TCP connection failed for " + _alias(result.check_id, "target")
         )
-    elif result.check_type == "http":
+    elif result.check_type in {"http", "openai-compatible"}:
         code = ""
         for token in detail.replace(":", " ").split():
             if token.isdigit() and len(token) == 3:
@@ -238,6 +238,126 @@ def check_http(spec: CheckSpec) -> CheckResult:
     return _missing(spec, f"unexpected HTTP {code}: {label}")
 
 
+def check_openai_compatible(spec: CheckSpec) -> CheckResult:
+    """Verify an OpenAI-compatible /models catalog without using an SDK."""
+
+    base_url = _string_option(spec, "base_url")
+    models_url = urljoin(base_url.rstrip("/") + "/", "models")
+    label = _safe_url_label(models_url)
+
+    timeout = spec.options.get("timeout", 5.0)
+    if (
+        isinstance(timeout, bool)
+        or not isinstance(timeout, (int, float))
+        or timeout <= 0
+    ):
+        raise ValueError(f"{spec.check_id}.timeout must be a positive number")
+
+    headers = {"User-Agent": "AI-Delivery-Doctor/0.1"}
+    api_key_env = spec.options.get("api_key_env")
+
+    if api_key_env is not None:
+        if not isinstance(api_key_env, str) or not api_key_env.strip():
+            raise ValueError(
+                f"{spec.check_id}.api_key_env must be a non-empty string"
+            )
+        api_key = os.environ.get(api_key_env.strip())
+        if not api_key:
+            return _missing(
+                spec,
+                f"API key environment variable is not set: "
+                f"{api_key_env.strip()}",
+            )
+        headers["Authorization"] = f"Bearer {api_key}"
+
+    requested_model = spec.options.get("model")
+    if requested_model is not None and (
+        not isinstance(requested_model, str)
+        or not requested_model.strip()
+    ):
+        raise ValueError(
+            f"{spec.check_id}.model must be a non-empty string when provided"
+        )
+
+    request = urllib.request.Request(models_url, headers=headers)
+
+    try:
+        with urllib.request.urlopen(
+            request,
+            timeout=float(timeout),
+        ) as response:
+            code = int(getattr(response, "status", 200))
+            raw = response.read()
+    except urllib.error.HTTPError as exc:
+        if exc.code in (401, 403):
+            return _missing(
+                spec,
+                f"OpenAI-compatible authentication failed: "
+                f"HTTP {exc.code} {label}",
+            )
+        return _missing(
+            spec,
+            f"OpenAI-compatible catalog returned HTTP {exc.code}: {label}",
+        )
+    except Exception as exc:
+        return _missing(
+            spec,
+            f"OpenAI-compatible probe failed: "
+            f"{label} ({type(exc).__name__})",
+        )
+
+    if not (200 <= code < 300):
+        return _missing(
+            spec,
+            f"OpenAI-compatible catalog returned HTTP {code}: {label}",
+        )
+
+    try:
+        import json
+
+        payload = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return _missing(
+            spec,
+            f"OpenAI-compatible /models response was not valid JSON: {label}",
+        )
+
+    if not isinstance(payload, dict) or not isinstance(
+        payload.get("data"),
+        list,
+    ):
+        return _missing(
+            spec,
+            f"OpenAI-compatible /models response lacks a data array: {label}",
+        )
+
+    model_ids = {
+        item.get("id")
+        for item in payload["data"]
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
+    }
+
+    if requested_model is not None:
+        requested_model = requested_model.strip()
+        if requested_model not in model_ids:
+            return _missing(
+                spec,
+                f"requested model not present in catalog: {requested_model}",
+            )
+        return _result(
+            spec,
+            "PASS",
+            f"OpenAI-compatible model available: {requested_model}",
+        )
+
+    return _result(
+        spec,
+        "PASS",
+        f"OpenAI-compatible catalog reachable: "
+        f"{label} ({len(model_ids)} models)",
+    )
+
+
 def run_check(spec: CheckSpec, config: DeliveryConfig) -> CheckResult:
     if spec.check_type == "file":
         return check_file(spec, config.base_dir)
@@ -249,6 +369,8 @@ def run_check(spec: CheckSpec, config: DeliveryConfig) -> CheckResult:
         return check_tcp(spec)
     if spec.check_type == "http":
         return check_http(spec)
+    if spec.check_type == "openai-compatible":
+        return check_openai_compatible(spec)
     raise ValueError(f"unsupported check type: {spec.check_type}")
 
 
