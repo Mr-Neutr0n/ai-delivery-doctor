@@ -53,6 +53,14 @@ aidoc doctor --config examples/broken.example.json
 
 The first example passes all required checks. The second intentionally fails one required acceptance artifact so you can see the blocking behavior.
 
+For the full before → repair condition → after → evidence-diff story in one command:
+
+```bash
+python scripts/showcase.py
+```
+
+See [3-Minute Showcase](docs/SHOWCASE.md) and the [Chinese hackathon walkthrough](docs/HACKATHON_CN.md).
+
 ## Core commands
 
 ```bash
