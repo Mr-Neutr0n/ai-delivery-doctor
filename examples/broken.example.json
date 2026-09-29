@@ -1,0 +1,27 @@
+{
+  "schema": "aidoc-v1",
+  "name": "intentional-broken-demo",
+  "checks": [
+    {
+      "id": "python-runtime",
+      "stage": "environment",
+      "type": "executable",
+      "name": "python",
+      "required": true
+    },
+    {
+      "id": "missing-acceptance-artifact",
+      "stage": "acceptance",
+      "type": "file",
+      "path": "./this-file-is-intentionally-missing.txt",
+      "required": true
+    },
+    {
+      "id": "downstream-placeholder",
+      "stage": "operator",
+      "type": "file",
+      "path": "../README.md",
+      "required": true
+    }
+  ]
+}
