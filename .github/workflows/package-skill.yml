@@ -1,0 +1,38 @@
+name: Package Agent Skill
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".agents/skills/ai-delivery-doctor/**"
+      - "scripts/package_skill.py"
+      - ".github/workflows/package-skill.yml"
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Build deterministic Skill archive
+        run: |
+          python scripts/package_skill.py \
+            .agents/skills/ai-delivery-doctor \
+            --output dist/ai-delivery-doctor-skill.zip
+
+      - name: Inspect archive
+        run: python -m zipfile -l dist/ai-delivery-doctor-skill.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ai-delivery-doctor-skill
+          path: dist/ai-delivery-doctor-skill.zip
+          if-no-files-found: error

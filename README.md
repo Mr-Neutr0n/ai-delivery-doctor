@@ -47,6 +47,7 @@ cd ai-delivery-doctor
 python -m pip install -e .
 python -m unittest discover -s tests -v
 
+python -m aidoc --version
 aidoc doctor --config examples/acceptance.example.json
 aidoc doctor --config examples/broken.example.json
 ```
