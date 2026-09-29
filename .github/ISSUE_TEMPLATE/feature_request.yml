@@ -1,0 +1,31 @@
+name: Feature request
+description: Propose a reusable delivery/acceptance capability
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Delivery problem
+      description: What repeated problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Observable evidence
+      description: What bounded fact should the feature establish?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed capability
+    validations:
+      required: true
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: Non-goals / boundaries
+      description: What should this not claim or do?

@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a reproducible non-sensitive defect
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please sanitize all contracts and output before posting. Do not include credentials, private endpoints, or customer data.
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      placeholder: "0.1.0 or commit SHA"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Windows 11 / Python 3.12"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: Use synthetic or sanitized values only.
+    validations:
+      required: true

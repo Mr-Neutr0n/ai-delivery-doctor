@@ -1,0 +1,20 @@
+{
+  "schema": "aidoc-v1",
+  "name": "agent-generated-delivery-path",
+  "checks": [
+    {
+      "id": "python-runtime",
+      "stage": "environment",
+      "type": "executable",
+      "name": "python",
+      "required": true
+    },
+    {
+      "id": "project-file",
+      "stage": "environment",
+      "type": "file",
+      "path": "./pyproject.toml",
+      "required": true
+    }
+  ]
+}
