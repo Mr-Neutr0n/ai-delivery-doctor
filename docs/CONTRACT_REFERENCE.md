@@ -108,3 +108,36 @@ A 401/403 is reported as WARN reachability evidence unless explicitly included i
 The first required FAIL is the current **blocking transition**.
 
 It is not automatically the root cause. It is the earliest point in the declared path where the expected condition could not be established.
+
+
+## openai-compatible
+
+Use this check for an OpenAI-compatible model catalog, including compatible local gateways.
+
+```json
+{
+  "id": "model-catalog",
+  "stage": "model",
+  "type": "openai-compatible",
+  "base_url": "http://127.0.0.1:11434/v1",
+  "model": "qwen3:8b",
+  "required": true
+}
+```
+
+For authenticated endpoints, reference an environment-variable **name**, never the key value:
+
+```json
+{
+  "id": "provider",
+  "stage": "model",
+  "type": "openai-compatible",
+  "base_url": "https://api.example.test/v1",
+  "api_key_env": "PROVIDER_API_KEY",
+  "required": true
+}
+```
+
+The check calls `/models`, validates the JSON `data` array, and optionally confirms that a requested model ID exists.
+
+The API key value is never written to the contract, terminal output, or evidence.
