@@ -44,3 +44,6 @@ jobs:
 
       - name: Run passing example
         run: aidoc doctor --config examples/acceptance.example.json
+
+      - name: Run deterministic showcase
+        run: python scripts/showcase.py
