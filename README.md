@@ -185,6 +185,12 @@ The first AI-native adapter is now built in: `openai-compatible` checks the mode
 - no arbitrary shell execution;
 - no claim that network reachability proves downstream business behavior.
 
+## Documentation
+
+Start with [Getting Started](docs/GETTING_STARTED.md), [3-Minute Showcase](docs/SHOWCASE.md), or the [Documentation Index](docs/INDEX.md).
+
+For design reasoning, read [Technical Philosophy](docs/PHILOSOPHY.md) and [Architecture](docs/ARCHITECTURE.md).
+
 ## Roadmap
 
 See [ROADMAP.md](ROADMAP.md).
