@@ -62,7 +62,13 @@ def sanitize_result(result: CheckResult) -> CheckResult:
 
     detail = result.detail
 
-    if result.check_type == "file":
+    if result.check_type == "directory":
+        detail = (
+            "directory check passed"
+            if result.status == "PASS"
+            else "directory check did not establish the expected condition"
+        )
+    elif result.check_type == "file":
         detail = (
             "file check passed"
             if result.status == "PASS"
@@ -126,6 +132,23 @@ def check_file(spec: CheckSpec, base_dir: Path) -> CheckResult:
         return _missing(spec, f"{type(exc).__name__}: {exc}")
 
     return _result(spec, "PASS", f"readable file ({size} bytes): {value}")
+
+
+def check_directory(spec: CheckSpec, base_dir: Path) -> CheckResult:
+    value = _string_option(spec, "path")
+    raw_path = Path(value)
+    target = (
+        (base_dir / raw_path).resolve()
+        if not raw_path.is_absolute()
+        else raw_path.expanduser().resolve()
+    )
+
+    if not target.exists():
+        return _missing(spec, f"required path not found: {value}")
+    if not target.is_dir():
+        return _missing(spec, f"path is not a directory: {value}")
+
+    return _result(spec, "PASS", f"directory exists: {value}")
 
 
 def check_env(spec: CheckSpec) -> CheckResult:
@@ -359,6 +382,8 @@ def check_openai_compatible(spec: CheckSpec) -> CheckResult:
 
 
 def run_check(spec: CheckSpec, config: DeliveryConfig) -> CheckResult:
+    if spec.check_type == "directory":
+        return check_directory(spec, config.base_dir)
     if spec.check_type == "file":
         return check_file(spec, config.base_dir)
     if spec.check_type == "env":

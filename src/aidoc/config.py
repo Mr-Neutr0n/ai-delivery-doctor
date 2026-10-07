@@ -7,7 +7,15 @@ from pathlib import Path
 from .model import CheckSpec
 
 
-SUPPORTED_TYPES = {"file", "env", "executable", "tcp", "http", "openai-compatible"}
+SUPPORTED_TYPES = {
+    "directory",
+    "file",
+    "env",
+    "executable",
+    "tcp",
+    "http",
+    "openai-compatible",
+}
 
 
 @dataclass(frozen=True)

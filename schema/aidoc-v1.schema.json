@@ -38,6 +38,7 @@
           },
           "type": {
             "enum": [
+              "directory",
               "file",
               "env",
               "executable",

@@ -29,6 +29,22 @@ Every check requires:
 
 A missing/failed optional check becomes WARN rather than a required blocker.
 
+## directory
+
+```json
+{
+  "id": "model-cache-dir",
+  "stage": "environment",
+  "type": "directory",
+  "path": "./models",
+  "required": true
+}
+```
+
+Relative paths are resolved from the directory containing the contract.
+
+PASS requires the path to exist and be a directory. The check does not create or modify paths.
+
 ## file
 
 ```json

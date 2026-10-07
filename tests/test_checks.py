@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from aidoc.checks import (
     _safe_url_label,
+    check_directory,
     check_env,
     check_file,
     sanitize_result,
@@ -36,6 +37,46 @@ class CheckTests(unittest.TestCase):
 
             self.assertEqual(check_file(good, root).status, "PASS")
             self.assertEqual(check_file(missing, root).status, "FAIL")
+
+    def test_directory_check_pass_fail_warn_and_not_a_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "models").mkdir()
+            (root / "not-a-dir.txt").write_text("x", encoding="utf-8")
+
+            good = CheckSpec(
+                "dir-ok",
+                "environment",
+                "directory",
+                True,
+                {"path": "models"},
+            )
+            missing_required = CheckSpec(
+                "dir-missing",
+                "environment",
+                "directory",
+                True,
+                {"path": "missing"},
+            )
+            missing_optional = CheckSpec(
+                "dir-optional",
+                "environment",
+                "directory",
+                False,
+                {"path": "optional-missing"},
+            )
+            file_not_dir = CheckSpec(
+                "dir-file",
+                "environment",
+                "directory",
+                True,
+                {"path": "not-a-dir.txt"},
+            )
+
+            self.assertEqual(check_directory(good, root).status, "PASS")
+            self.assertEqual(check_directory(missing_required, root).status, "FAIL")
+            self.assertEqual(check_directory(missing_optional, root).status, "WARN")
+            self.assertEqual(check_directory(file_not_dir, root).status, "FAIL")
 
     def test_optional_missing_env_is_warn_and_never_prints_value(self):
         spec = CheckSpec(
@@ -81,6 +122,22 @@ class CheckTests(unittest.TestCase):
 
         self.assertNotIn("customer", safe.detail)
         self.assertNotIn("/private/", safe.detail)
+        self.assertEqual(safe.status, "FAIL")
+
+    def test_shareable_result_minimizes_directory_detail(self):
+        result = CheckResult(
+            "model-cache-dir",
+            "environment",
+            "directory",
+            True,
+            "FAIL",
+            "/private/customer/site/models was not found",
+        )
+        safe = sanitize_result(result)
+
+        self.assertNotIn("customer", safe.detail)
+        self.assertNotIn("/private/", safe.detail)
+        self.assertNotIn("models", safe.detail)
         self.assertEqual(safe.status, "FAIL")
 
 
