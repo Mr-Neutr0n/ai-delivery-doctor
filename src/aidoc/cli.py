@@ -9,6 +9,7 @@ from .checks import run_checks
 from .compare import (
     compare_evidence,
     has_required_regression,
+    load_evidence_results,
     render_markdown as render_compare_markdown,
     render_terminal as render_compare_terminal,
 )
@@ -80,6 +81,13 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("after", type=Path)
     compare.add_argument("--markdown", type=Path, dest="markdown_output")
 
+    report = sub.add_parser(
+        "report",
+        help="Render a human-readable report from an evidence bundle.",
+    )
+    report.add_argument("evidence", type=Path)
+    report.add_argument("--markdown", type=Path, dest="markdown_output")
+
     doctor = sub.add_parser("doctor", help="Run delivery checks.")
     doctor.add_argument("--config", type=Path, required=True)
     doctor.add_argument("--json", type=Path, dest="json_output")
@@ -124,6 +132,23 @@ def main(argv: list[str] | None = None) -> int:
             )
 
         return 1 if has_required_regression(changes) else 0
+
+    if args.command == "report":
+        try:
+            name, results = load_evidence_results(args.evidence)
+        except ValueError as exc:
+            raise SystemExit(f"error: {exc}") from exc
+
+        print(render_terminal(name, results))
+
+        if args.markdown_output:
+            args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
+            args.markdown_output.write_text(
+                render_markdown(name, results),
+                encoding="utf-8",
+            )
+
+        return 1 if first_blocker(results) is not None else 0
 
     try:
         config = load_config(args.config)

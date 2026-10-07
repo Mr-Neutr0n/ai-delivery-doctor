@@ -83,6 +83,8 @@ aidoc doctor \
 
 aidoc compare baseline.json current.json \
   --markdown comparison.md
+
+aidoc report evidence.json --markdown report.md
 ```
 
 ## Supported v0.1 checks

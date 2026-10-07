@@ -63,7 +63,15 @@ aidoc doctor \
 
 Review any evidence before external sharing.
 
-## 7. Use the Agent Skill
+## 7. Render a report from stored evidence
+
+To produce a Markdown report from an existing `aidoc-evidence-v1` bundle without re-running checks:
+
+```bash
+aidoc report evidence.json --markdown report.md
+```
+
+## 8. Use the Agent Skill
 
 The skill is located at:
 
