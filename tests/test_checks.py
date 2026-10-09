@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 import unittest
@@ -9,8 +10,10 @@ from aidoc.checks import (
     check_directory,
     check_env,
     check_file,
+    run_check,
     sanitize_result,
 )
+from aidoc.config import load_config
 from aidoc.model import CheckResult, CheckSpec
 
 
@@ -77,6 +80,84 @@ class CheckTests(unittest.TestCase):
             self.assertEqual(check_directory(missing_required, root).status, "FAIL")
             self.assertEqual(check_directory(missing_optional, root).status, "WARN")
             self.assertEqual(check_directory(file_not_dir, root).status, "FAIL")
+
+    def test_directory_check_resolves_a_relative_path_from_the_loaded_contract(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "models").mkdir()
+            contract = root / "aidoc.json"
+            contract.write_text(
+                json.dumps(
+                    {
+                        "schema": "aidoc-v1",
+                        "name": "directory-route",
+                        "checks": [
+                            {
+                                "id": "model-cache-dir",
+                                "stage": "environment",
+                                "type": "directory",
+                                "path": "models",
+                                "required": True,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            config = load_config(contract)
+
+            self.assertEqual(config.base_dir, root.resolve())
+            self.assertEqual(run_check(config.checks[0], config).status, "PASS")
+
+    @unittest.skipIf(os.name == "nt", "POSIX directory permissions")
+    def test_directory_check_turns_an_unreadable_path_into_a_bounded_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            blocked = root / "blocked"
+            blocked.mkdir()
+            (blocked / "models").mkdir()
+            blocked.chmod(0o000)
+            try:
+                spec = CheckSpec(
+                    "blocked-dir",
+                    "environment",
+                    "directory",
+                    True,
+                    {"path": "blocked/models"},
+                )
+                result = check_directory(spec, root)
+            finally:
+                blocked.chmod(0o755)
+
+            # Older Pythons raise from exists(); 3.14 answers False. Either way the
+            # probe stays a bounded FAIL and never leaks the absolute path.
+            self.assertEqual(result.status, "FAIL")
+            self.assertTrue(
+                "PermissionError" in result.detail
+                or "required path not found" in result.detail,
+                result.detail,
+            )
+            self.assertNotIn(str(root), result.detail)
+
+    def test_directory_check_turns_an_oserror_into_a_bounded_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            spec = CheckSpec(
+                "blocked-dir",
+                "environment",
+                "directory",
+                True,
+                {"path": "blocked"},
+            )
+            with patch.object(
+                Path, "exists", side_effect=PermissionError(13, "Permission denied")
+            ):
+                result = check_directory(spec, Path(tmp))
+
+            self.assertEqual(result.status, "FAIL")
+            self.assertEqual(
+                result.detail, "PermissionError: unable to inspect directory: blocked"
+            )
 
     def test_optional_missing_env_is_warn_and_never_prints_value(self):
         spec = CheckSpec(

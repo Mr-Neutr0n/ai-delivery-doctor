@@ -137,16 +137,22 @@ def check_file(spec: CheckSpec, base_dir: Path) -> CheckResult:
 def check_directory(spec: CheckSpec, base_dir: Path) -> CheckResult:
     value = _string_option(spec, "path")
     raw_path = Path(value)
-    target = (
-        (base_dir / raw_path).resolve()
-        if not raw_path.is_absolute()
-        else raw_path.expanduser().resolve()
-    )
 
-    if not target.exists():
-        return _missing(spec, f"required path not found: {value}")
-    if not target.is_dir():
-        return _missing(spec, f"path is not a directory: {value}")
+    try:
+        target = (
+            (base_dir / raw_path).resolve()
+            if not raw_path.is_absolute()
+            else raw_path.expanduser().resolve()
+        )
+
+        if not target.exists():
+            return _missing(spec, f"required path not found: {value}")
+        if not target.is_dir():
+            return _missing(spec, f"path is not a directory: {value}")
+    except OSError as exc:
+        return _missing(
+            spec, f"{type(exc).__name__}: unable to inspect directory: {value}"
+        )
 
     return _result(spec, "PASS", f"directory exists: {value}")
 
