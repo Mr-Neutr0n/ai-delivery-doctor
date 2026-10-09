@@ -97,7 +97,7 @@ def _load_checks(path: Path) -> dict[str, EvidenceCheck]:
     return {check.check_id: check for check in _parse_raw_checks(data.get("checks"))}
 
 
-def load_evidence_results(path: Path) -> tuple[str, list[CheckResult]]:
+def load_evidence_results(path: Path) -> tuple[str, list[CheckResult], bool]:
     data = _read_evidence_document(path)
     name = data.get("name")
     if not isinstance(name, str) or not name:
@@ -114,7 +114,9 @@ def load_evidence_results(path: Path) -> tuple[str, list[CheckResult]]:
         )
         for check in _parse_raw_checks(data.get("checks"))
     ]
-    return name, results
+    # Fail safe: a missing or malformed flag reads as not shareable so the report
+    # warns instead of assuming the bundle is safe to disclose.
+    return name, results, data.get("shareable") is True
 
 
 def compare_evidence(before_path: Path, after_path: Path) -> list[EvidenceChange]:

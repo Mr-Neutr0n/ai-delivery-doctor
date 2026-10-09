@@ -8,6 +8,7 @@ from aidoc.compare import (
     has_required_regression,
     render_markdown,
 )
+from aidoc.model import CheckResult, evidence_bundle
 
 
 def _write(path: Path, checks: list[dict]) -> None:
@@ -127,6 +128,61 @@ class CompareTests(unittest.TestCase):
 
             self.assertEqual(by_id["old"], "REMOVED")
             self.assertEqual(by_id["new"], "ADDED")
+
+    def test_rejects_duplicate_and_malformed_check_entries(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            duplicate = root / "duplicate.json"
+            item = {
+                "check_id": "same",
+                "stage": "environment",
+                "check_type": "file",
+                "required": True,
+                "status": "PASS",
+                "detail": "ok",
+            }
+            _write(duplicate, [item, dict(item)])
+
+            with self.assertRaisesRegex(
+                ValueError, "duplicate evidence check id: same"
+            ):
+                compare_evidence(duplicate, duplicate)
+
+            malformed = root / "malformed.json"
+            _write(
+                malformed,
+                [
+                    {
+                        "check_id": "model",
+                        "stage": "model",
+                        "required": True,
+                        "status": "PASS",
+                        "detail": "ok",
+                    }
+                ],
+            )
+
+            with self.assertRaisesRegex(ValueError, "check_type"):
+                compare_evidence(malformed, malformed)
+
+    def test_v1_evidence_written_by_doctor_compares_unchanged(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "evidence.json"
+            bundle = evidence_bundle(
+                "demo",
+                [
+                    CheckResult("model", "model", "env", True, "PASS", "set"),
+                    CheckResult("tool", "tools", "tcp", False, "WARN", "slow"),
+                ],
+            )
+            path.write_text(json.dumps(bundle), encoding="utf-8")
+
+            changes = compare_evidence(path, path)
+
+            self.assertEqual(
+                [change.change for change in changes],
+                ["UNCHANGED", "UNCHANGED"],
+            )
 
 
 if __name__ == "__main__":

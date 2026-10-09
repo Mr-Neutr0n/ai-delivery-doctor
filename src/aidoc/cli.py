@@ -135,16 +135,27 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "report":
         try:
-            name, results = load_evidence_results(args.evidence)
+            name, results, shareable = load_evidence_results(args.evidence)
         except ValueError as exc:
             raise SystemExit(f"error: {exc}") from exc
 
+        warning = None if shareable else (
+            "This evidence bundle is not marked shareable, so the report may "
+            "contain raw diagnostic details. Review it before sharing."
+        )
+
+        if warning:
+            print(f"WARNING  {warning}")
+            print()
         print(render_terminal(name, results))
 
         if args.markdown_output:
+            markdown = render_markdown(name, results)
+            if warning:
+                markdown = f"> **Warning:** {warning}\n\n{markdown}"
             args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
             args.markdown_output.write_text(
-                render_markdown(name, results),
+                markdown,
                 encoding="utf-8",
             )
 
