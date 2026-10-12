@@ -1,28 +1,35 @@
-## Problem
+## Problem and scope
 
-What real delivery/acceptance problem does this change solve?
+What reproducible AI application delivery or acceptance problem does this solve? Keep the public change small and vendor-neutral.
 
-## Change
+## Changes
 
-What changed?
+Describe exactly what changed and how the behavior differs from `main`.
 
-## Evidence
+## Evidence and validation
 
-How was the behavior verified?
+- [ ] I ran `python -m unittest discover -s tests -v` (or explained why this was not possible).
+- [ ] I ran focused tests, validation commands, or the existing examples relevant to this change.
+- [ ] New behavior has a deterministic regression test or a reproducible validation path.
+- [ ] I distinguished local test evidence from GitHub Actions results.
 
-```bash
-python -m unittest discover -s tests -v
-```
+Commands, observed results, and test limitations:
 
-Add focused commands/results when relevant.
+## Evidence and compatibility boundaries
 
-## Boundaries
+What does the change prove? What does it **not** prove? State any Windows, macOS, Linux, Python, contract-schema, or evidence-format compatibility implications.
 
-What does this result **not** prove?
+## Security and privacy
 
-## Safety / privacy
+- [ ] No credentials, tokens, API keys, private keys, license files, device fingerprints, or customer identifiers.
+- [ ] No private endpoints, production configurations, raw deployment logs, customer screenshots, or alarm history.
+- [ ] Examples and test fixtures are synthetic; probes are explicitly scoped.
+- [ ] No arbitrary command execution, unapproved network activity, system mutation, or weakened privacy defaults.
+- [ ] Any diagnostic reports or evidence attached to this PR have been reviewed and sanitized for public sharing.
 
-- [ ] No secrets or credential values added
-- [ ] No private customer endpoints/data added
-- [ ] Diagnostic behavior remains read-only unless explicitly scoped otherwise
-- [ ] New behavior has tests or a documented validation path
+## AI assistance
+
+- [ ] No AI assistance was used.
+- [ ] AI assistance was used, and I reviewed the code and verified the factual claims.
+
+AI assistance notes, if applicable:
