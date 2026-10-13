@@ -119,6 +119,14 @@ class CheckTests(unittest.TestCase):
             (blocked / "models").mkdir()
             blocked.chmod(0o000)
             try:
+                # A privileged process (root or CAP_DAC_OVERRIDE/READ_SEARCH) still
+                # traverses a mode-0o000 directory, so the failure this test asserts
+                # cannot happen there. Detect the same condition the OS enforces and
+                # skip instead of asserting a privilege-dependent PASS/FAIL.
+                if os.access(blocked, os.R_OK | os.X_OK):
+                    self.skipTest(
+                        "effective privileges bypass mode 0o000 (root or DAC override)"
+                    )
                 spec = CheckSpec(
                     "blocked-dir",
                     "environment",
